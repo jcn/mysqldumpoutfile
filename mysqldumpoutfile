@@ -1,0 +1,18 @@
+#!/bin/sh
+
+DB=$1
+OUTDIR=$2
+
+TABLES=`mysql $DB -e 'SHOW TABLES' | tail --lines=+2`
+
+for TABLE in $TABLES
+do
+
+        OUTPATH=$OUTDIR/$TABLE
+        if [ ! -f $OUTPATH ]; then
+                echo "Dumping $TABLE to $OUTPATH"
+                mysql $DB -e "SELECT * FROM $TABLE INTO OUTFILE '$OUTPATH'"
+        else
+                echo "Skipping $TABLE; file exists"
+        fi
+done
